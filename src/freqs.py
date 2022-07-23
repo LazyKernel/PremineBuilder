@@ -65,9 +65,5 @@ def fetch():
     jpdb = JPDB()
     jpdb.fetch_from_web()
 
-def setup():
-    DBUtil.temp_setup_freq()
-    DBUtil.load_kanji_freqs()
-
 if __name__ == '__main__':
     construct_kanji_list()

@@ -16,7 +16,8 @@ class DBUtil:
         'source/frequency/Anime and Drama/Anime&Drama V2.zip',
         'source/frequency/Wikipedia/Wikipedia v2.zip',
         'source/frequency/Novels/Novels.zip',
-        'source/frequency/Netflix/Netflix V2.zip'
+        'source/frequency/Netflix/Netflix V2.zip',
+        'source/frequency/Youtube/YouTube_Frequency_1.3_.zip'
     ]
     pitch_accent_dicts = [
         'source/kanjium_pitch_accents.zip'
@@ -290,29 +291,6 @@ class DBUtil:
             '''
         )
         cur.execute('CREATE INDEX dict_idx_pitch_word ON dict_pitch_accent (word)')
-
-        # Create kanji frequency table
-        cur.execute(
-            '''
-            CREATE TABLE dict_kanji_frequency(
-                id INTEGER PRIMARY KEY,
-                kanji TEXT,
-                freq INTEGER,
-                kind TEXT
-            )
-            '''
-        )
-        cur.execute('CREATE INDEX dict_idx_kanji_kanji ON dict_kanji_frequency (kanji)')
-        cur.execute('CREATE INDEX dict_idx_kanji_freq ON dict_kanji_frequency (freq)')
-
-        con.commit()
-        cur.close()
-        DBUtil.close_con()
-
-    @staticmethod
-    def temp_setup_freq():
-        con = DBUtil.get_con()
-        cur = con.cursor()
 
         # Create kanji frequency table
         cur.execute(
