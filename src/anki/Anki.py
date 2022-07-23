@@ -54,7 +54,7 @@ class Anki:
         if not self.deck:
             raise ValueError('self.deck not set. Run create_package first.')
         
-        self.notes = self.notes.append(values)
+        self.notes = pd.concat([self.notes, values], axis=0, join='outer', ignore_index=True)
         return self.notes.index[-1]
 
     def set_field(self, content: str, note_id: int, field_name: str):
@@ -69,6 +69,7 @@ class Anki:
             mask = row.index.isin(['tag'])
             # TODO: parsing tags here, this should probably be done elsewhere
             note = genanki.Note(model=model_vocab, fields=row.loc[~mask].to_list(), tags=str(row['tag']).split())
+            #note = genanki.Note(model=model_vocab, fields=row.to_list())
             self.deck.add_note(note)
 
         package = genanki.Package(self.deck, self.media_files)

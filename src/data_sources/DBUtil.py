@@ -11,6 +11,7 @@ class DBUtil:
 
     jlpt_path = 'source/jlpt_words.xlsx'
     reibun_path = 'source/reibun.zip'
+    kanji_freq_path = 'source/kanji_freq.csv'
     frequency_lists = [
         'source/frequency/Anime and Drama/Anime&Drama V2.zip',
         'source/frequency/Wikipedia/Wikipedia v2.zip',
@@ -137,6 +138,21 @@ class DBUtil:
                         data_mapped = map(lambda x: (x[0], x[1], x[3], x[4], json.dumps(x[5]), x[6], title), data_json)
                         cur.executemany('INSERT INTO dict_term(expression, reading, rule, score, glossary, sequence, dict) VALUES (?, ?, ?, ?, ?, ?, ?)', data_mapped)
         
+        con.commit()
+        cur.close()
+        DBUtil.close_con()
+
+    @staticmethod
+    def load_kanji_freqs():
+        print('Loading kanji frequencies')
+        con = DBUtil.get_con()
+        cur = con.cursor()
+
+        # Load data from csv to db
+        df = pd.read_csv(DBUtil.kanji_freq_path, encoding='utf-8')
+        data = list(df.itertuples(index=False, name=None))
+        cur.executemany('INSERT INTO dict_kanji_frequency(freq, kanji, kind) VALUES (?, ?, ?)', data)
+
         con.commit()
         cur.close()
         DBUtil.close_con()
@@ -274,6 +290,44 @@ class DBUtil:
             '''
         )
         cur.execute('CREATE INDEX dict_idx_pitch_word ON dict_pitch_accent (word)')
+
+        # Create kanji frequency table
+        cur.execute(
+            '''
+            CREATE TABLE dict_kanji_frequency(
+                id INTEGER PRIMARY KEY,
+                kanji TEXT,
+                freq INTEGER,
+                kind TEXT
+            )
+            '''
+        )
+        cur.execute('CREATE INDEX dict_idx_kanji_kanji ON dict_kanji_frequency (kanji)')
+        cur.execute('CREATE INDEX dict_idx_kanji_freq ON dict_kanji_frequency (freq)')
+
+        con.commit()
+        cur.close()
+        DBUtil.close_con()
+
+    @staticmethod
+    def temp_setup_freq():
+        con = DBUtil.get_con()
+        cur = con.cursor()
+
+        # Create kanji frequency table
+        cur.execute(
+            '''
+            CREATE TABLE dict_kanji_frequency(
+                id INTEGER PRIMARY KEY,
+                kanji TEXT,
+                freq INTEGER,
+                kind TEXT
+            )
+            '''
+        )
+        cur.execute('CREATE INDEX dict_idx_kanji_kanji ON dict_kanji_frequency (kanji)')
+        cur.execute('CREATE INDEX dict_idx_kanji_freq ON dict_kanji_frequency (freq)')
+
         con.commit()
         cur.close()
         DBUtil.close_con()

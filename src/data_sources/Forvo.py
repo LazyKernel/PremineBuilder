@@ -1,4 +1,5 @@
 import re
+import os.path
 import cloudscraper
 import base64
 import bs4
@@ -12,19 +13,32 @@ class Forvo:
     audio_base_url2 = 'https://audio00.forvo.com/mp3'
     audio_regex = re.compile(r"Play\(\d+?,'(.*?)','.*?',(?:false|true),'(.*?)','.+?'\)")
 
-    def __init__(self, user_priority_list=[], drop_if_not_on_list=False):
+    def __init__(self, user_priority_list=[], drop_if_not_on_list=False, use_cached_id=None):
         self.scraper = cloudscraper.create_scraper()
         self.user_prio_list = user_priority_list
         self.drop_if_not_on_list = drop_if_not_on_list
+        self.cache = use_cached_id
 
     def download_audio(self, mp3_path: str, word: str):
         data = self.scraper.get(mp3_path)
         if data.status_code != 200:
-            print('something broke with', word, 'path', mp3_path)
+            print('something broke with', word, 'path', mp3_path, 'status code', data.status_code)
             return None
         return data.content
 
+    def download_audio_cached(self, word: str):
+        path = f'media_tmp/{self.cache}/{word}.mp3'
+        if not os.path.isfile(path):
+            print('no audio for word', word)
+            return None
+        
+        with open(path, 'rb') as f:
+            return f.read()
+
     def get_audio_for_word(self, word: str):
+        if self.cache:
+            return self.download_audio_cached(word)
+
         def find_user(element: bs4.Tag):
             if element:
                 return element.text

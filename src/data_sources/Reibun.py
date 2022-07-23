@@ -28,7 +28,7 @@ class Reibun:
                 if len(freqs) > 0:
                     avg = sum(map(lambda x: x['freq'], freqs)) / len(freqs)
                 else:
-                    avg = 5000
+                    avg = 20000
                 score += avg
             # dont overvalue short sentences
             score /= len(words)
