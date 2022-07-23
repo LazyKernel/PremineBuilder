@@ -1,21 +1,23 @@
 import os.path
+import inflection
 import pandas as pd
 from data_sources.DBUtil import DBUtil
 from data_sources.JPDB import JPDB
 
 
-def construct_kanji_list():
-    if not os.path.isfile('source/temp_freq.csv'):
+def construct_kanji_list(frequency_list_name: str) -> pd.DataFrame:
+    name_snake = inflection.underscore(frequency_list_name)
+    if not os.path.isfile(f'source/temp_kanji_freq_{name_snake}.csv'):
         con = DBUtil.get_con()
         cur = con.cursor()
         cur.execute(
-            '''
+            f'''
             CREATE TEMPORARY TABLE temp_kanji_freq AS 
                 SELECT kf.kanji, t.expression AS word, MIN(kf.freq) AS kanji_freq, MIN(f.freq) AS freq 
                 FROM dict_kanji_frequency kf
                 LEFT JOIN dict_term t ON instr(t.expression, kf.kanji) > 0
                 LEFT JOIN dict_frequency f ON f.word = t.expression
-                WHERE kf.freq <= 2500 AND f.dict IN ('Netflix', 'Anime & J-drama')
+                WHERE kf.freq <= 2500 AND f.dict = '{frequency_list_name}'
                 GROUP BY kf.kanji, t.expression
             '''
         )
@@ -36,13 +38,13 @@ def construct_kanji_list():
         )
         print(df)
         # this sql takes ages to run (hours) so caching the result
-        df.to_csv('source/temp_freq.csv', index=False, encoding='utf-8')
+        df.to_csv(f'source/temp_kanji_freq_{name_snake}.csv', index=False, encoding='utf-8')
 
         # closing the connection to get rid of the temporary table
         DBUtil.close_con()
     else:
         # read from cache
-        df = pd.read_csv('source/temp_freq.csv', encoding='utf-8')
+        df = pd.read_csv(f'source/temp_kanji_freq_{name_snake}.csv', encoding='utf-8')
 
     # first sort the words within groups
     df = df.groupby(['kanji', 'kanji_freq']).apply(lambda x: x.sort_values('freq'))
@@ -58,12 +60,25 @@ def construct_kanji_list():
     # finally sort the rows by kanji frequency
     df = df.sort_values('kanji_freq').reset_index(drop=True)
     
-    df.to_csv('out/kanjis_with_words_by_freq.csv', index=False, encoding='utf-8')
+    df.to_csv(f'out/kanji_freq_{name_snake}.csv', index=False, encoding='utf-8')
+    return df
 
 
 def fetch():
     jpdb = JPDB()
     jpdb.fetch_from_web()
+
+def construct_full_list():
+    freq_lists = [
+        'Anime & J-drama',
+        'Netflix',
+        'Novels',
+        'Wikipedia',
+        'Youtube'
+    ]
+
+    for freq_list in freq_lists:
+        construct_kanji_list(freq_list)
 
 if __name__ == '__main__':
     construct_kanji_list()
