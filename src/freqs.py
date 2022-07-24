@@ -1,6 +1,7 @@
 import os.path
 import inflection
 import pandas as pd
+from data_sources.General import General
 from data_sources.DBUtil import DBUtil
 from data_sources.JPDB import JPDB
 
@@ -80,5 +81,49 @@ def construct_full_list():
     for freq_list in freq_lists:
         construct_kanji_list(freq_list)
 
+def freqs_for_wanikani():
+    with open('source/wanikani_vocab_list.txt', 'r', encoding='utf-8') as f:
+        words = f.readlines()
+    
+    general = General()
+    words = [word.strip().replace('〜', '') for word in words]
+    freqs = [general.get_frequencies_for_word(word) for word in words]
+
+    data = {
+        'word': words,
+        'Anime & J-drama': [],
+        'Netflix': [],
+        'Novels': [],
+        'Wikipedia': [],
+        'Youtube': []
+    }
+
+    # add the freqs to each word
+    for word_freqs in freqs:
+        freq_delta = {
+            'Anime & J-drama': None,
+            'Netflix': None,
+            'Novels': None,
+            'Wikipedia': None,
+            'Youtube': None
+        }
+        for freq in word_freqs:
+            freq_delta[freq['dict']] = freq['freq']
+
+        for d, f in freq_delta.items():
+            data[d].append(f)
+
+    df = pd.DataFrame(data=data)
+    df = df.rename(columns={
+        'Anime & J-drama': 'anime_and_j_drama',
+        'Netflix': 'netflix',
+        'Novels': 'novels',
+        'Wikipedia': 'wikipedia',
+        'Youtube': 'youtube'
+    })
+    print(df)
+    df.to_csv('out/wanikani_freqs.csv', index=False, encoding='utf-8')
+
+
 if __name__ == '__main__':
-    construct_kanji_list()
+    freqs_for_wanikani()
