@@ -28,7 +28,7 @@ def generate_content(row):
 
     return pd.Series([row['word'], ', '.join(reading), form.parse_content(row['word'], reading[0], content), row['tag']], index=['word', 'reading', 'content', 'tag'])
 
-def create_deck(package_name: str):
+def create_deck(package_name: str, source_file: str):
     anki = Anki()
     forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], True)
     general = General()
@@ -37,9 +37,10 @@ def create_deck(package_name: str):
     anki.create_package(package_name)
 
     bank_df = pd.read_csv('source/sentence_bank.csv', sep='	', encoding='utf-8')
-    words_df = pd.read_csv('source/new_vocab_list_from_book.csv', encoding='utf-8', sep='\t')
+    words_df = pd.read_csv(f'source/{source_file}', encoding='utf-8', sep='\t')
     words_df = words_df[['word']]
     words_df = words_df.dropna().drop_duplicates()
+    words_df['word'] = words_df['word'].str.strip()
 
     words_df = words_df.merge(bank_df, how='left', left_on='word', right_on='word')
     words_df = words_df[['word', 'reading', 'content', 'tag']]
@@ -128,7 +129,7 @@ def create_deck_korey(package_name: str):
     print('words_not_in_forvo', words_not_in_forvo)
 
 def load():
-    create_deck('New Mystery Book')
+    create_deck('T13 Deck', 't13.txt')
 
 def setup():
     DBUtil.setup_db()

@@ -36,7 +36,7 @@ class DBUtil:
     @staticmethod
     def get_con():
         if not DBUtil._con:
-            DBUtil._con = sqlite3.connect(DBUtil.db_path)
+            DBUtil._con = sqlite3.connect(DBUtil.db_path, check_same_thread=True)
         return DBUtil._con
 
     @staticmethod

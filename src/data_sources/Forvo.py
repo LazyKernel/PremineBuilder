@@ -58,13 +58,13 @@ class Forvo:
             print('No audio for word', word)
             return None
 
-        pronunciation_container = lang_container.find('ul', {'class': 'show-all-pronunciations'})
+        pronunciation_container = lang_container.find('ul', {'class': 'pronunciations-list-ja'})
         if not pronunciation_container:
             print('No audio for word', word)
             return None
 
-        play_buttons = pronunciation_container.find_all('span', {'class': 'play'})
-        list_of_audio = [{'user': find_user(button.find_next_sibling('span', {'class': 'ofLink'})), 'elem': button} for button in play_buttons]
+        play_buttons = pronunciation_container.find_all('div', {'class': 'play'})
+        list_of_audio = [{'user': find_user(button.find_next('span', {'class': 'ofLink'})), 'elem': button} for button in play_buttons]
 
         list_of_audio = sorted(list_of_audio, key=sort_users, reverse=True)
 

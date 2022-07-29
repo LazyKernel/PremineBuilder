@@ -74,4 +74,7 @@ class Anki:
 
         package = genanki.Package(self.deck, self.media_files)
         package.write_to_file(file_name)
-        shutil.rmtree(self.media_temp, ignore_errors=False, onerror=None)
+
+        # only remove if the folder exists
+        if os.path.isdir(self.media_temp):
+            shutil.rmtree(self.media_temp, ignore_errors=False, onerror=None)
