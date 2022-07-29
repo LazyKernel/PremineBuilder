@@ -39,7 +39,7 @@ def create_deck(package_name: str):
     bank_df = pd.read_csv('source/sentence_bank.csv', sep='	', encoding='utf-8')
     words_df = pd.read_csv('source/new_vocab_list_from_book.csv', encoding='utf-8', sep='\t')
     words_df = words_df[['word']]
-    words_df = words_df.dropna()
+    words_df = words_df.dropna().drop_duplicates()
 
     words_df = words_df.merge(bank_df, how='left', left_on='word', right_on='word')
     words_df = words_df[['word', 'reading', 'content', 'tag']]
