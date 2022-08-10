@@ -14,5 +14,5 @@ setup(
         'jaconv'
     ],
     package_dir={'': 'src'},
-    packages=['premine']
+    packages=['premine', 'premine.anki', 'premine.data_sources']
 )
