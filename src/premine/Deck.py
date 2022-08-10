@@ -33,6 +33,9 @@ class Deck:
                 sys.stdout = f
                 sys.stderr = errf
                 self._create_deck_internal(package_name, deck_id, source_file)
+        except:
+            import traceback
+            print(traceback.format_exc(), file=sys.stderr)
         finally:
             self.creating = False
             self.log_to_file = None
