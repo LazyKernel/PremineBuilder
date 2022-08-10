@@ -15,7 +15,7 @@ class Deck:
         self.log_to_file = None
         self.status_file_handle = None
 
-    def create_deck(self, package_name: str, source_file: str, log_to_file: str | None = None):
+    def create_deck(self, package_name: str, deck_id: str, source_file: str, log_to_file: str | None = None):
         if self.creating:
             print('Already creating a deck, create a new object')
             return
@@ -32,7 +32,7 @@ class Deck:
             ):
                 sys.stdout = f
                 sys.stderr = errf
-                self._create_deck_internal(package_name, source_file)
+                self._create_deck_internal(package_name, deck_id, source_file)
         finally:
             self.creating = False
             self.log_to_file = None
@@ -66,7 +66,7 @@ class Deck:
             index=['word', 'reading', 'content', 'tag']
         )
 
-    def _create_deck_internal(self, package_name: str, source_file: str):
+    def _create_deck_internal(self, package_name: str, deck_id: int, source_file: str):
         anki = Anki()
         forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], True)
         general = General()
@@ -75,7 +75,7 @@ class Deck:
         anki.create_package(package_name)
 
         bank_df = pd.read_csv('source/sentence_bank.csv', sep='	', encoding='utf-8')
-        words_df = pd.read_csv(f'source/{source_file}', encoding='utf-8', sep='\t')
+        words_df = pd.read_csv(source_file, encoding='utf-8', sep='\t')
         words_df = words_df[['word']]
         words_df = words_df.dropna().drop_duplicates()
         words_df['word'] = words_df['word'].str.strip()
@@ -118,7 +118,7 @@ class Deck:
             pitches_str = '\n'.join([f'{pitch["reading"]}: {", ".join([str(p["position"]) for p in pitch["pitches"]])}' for pitch in pitches])
             anki.set_field(pitches_str, note_id, 'Pitch')
 
-        anki.write_to_package(f'{package_name}.apkg')
+        anki.write_to_package(f'{str(deck_id)}.apkg')
         print('words_not_in_forvo', words_not_in_forvo)
 
     def _update_status(self, words_done: int, words_total: int):
