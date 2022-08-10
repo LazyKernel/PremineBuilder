@@ -82,7 +82,7 @@ class Deck:
 
         words_df = words_df.merge(bank_df, how='left', left_on='word', right_on='word')
         words_df = words_df[['word', 'reading', 'content', 'tag']]
-        words_df = words_df.apply(self.generate_content, axis=1)
+        words_df = words_df.apply(self._generate_content, axis=1)
         words_df = words_df.rename(columns={'word': 'Word', 'reading': 'ReadInfo', 'content': 'Content'})
 
         words_not_in_forvo = []
