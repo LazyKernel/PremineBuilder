@@ -5,7 +5,7 @@ import shutil
 from typing import Union
 import pandas as pd
 
-from anki.static_data import model_vocab
+from premine.anki.static_data import model_vocab
 
 class Anki:
     def create_package(self, package_name: str):

@@ -2,7 +2,7 @@ import cloudscraper
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from data_sources.DBUtil import DBUtil
+from premine.data_sources.DBUtil import DBUtil
 
 class JPDB:
 

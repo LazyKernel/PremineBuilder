@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
-from anki.Anki import Anki
-from anki.Format import Format
-from data_sources.Forvo import Forvo
-from data_sources.DBUtil import DBUtil
-from data_sources.General import General
-from data_sources.Reibun import Reibun
+from premine.anki.Anki import Anki
+from premine.anki.Format import Format
+from premine.data_sources.Forvo import Forvo
+from premine.data_sources.DBUtil import DBUtil
+from premine.data_sources.General import General
+from premine.data_sources.Reibun import Reibun
 
 gen = General()
 form = Format()
@@ -126,10 +126,10 @@ def create_deck_korey(package_name: str):
         anki.set_field(pitches_str, note_id, 'Pitch')
 
     anki.write_to_package(f'{package_name}.apkg')
-    print('words_not_in_forvo', words_not_in_forvo)
+    print('words_not_in_forvo', words_not_in_forvo) 
 
 def load():
-    create_deck('T13 Deck', 't13.txt')
+    create_deck('The Tunnel to Summer', 'the_tunnel_to_summer_unknown_words.txt')
 
 def setup():
     DBUtil.setup_db()

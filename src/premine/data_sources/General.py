@@ -1,5 +1,5 @@
 import json
-from data_sources.DBUtil import DBUtil
+from premine.data_sources.DBUtil import DBUtil
 
 class General:
 

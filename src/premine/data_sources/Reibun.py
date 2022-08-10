@@ -1,5 +1,5 @@
-from data_sources.DBUtil import DBUtil
-from data_sources.General import General
+from premine.data_sources.DBUtil import DBUtil
+from premine.data_sources.General import General
 from sudachipy import tokenizer
 from sudachipy import dictionary
 

@@ -1,6 +1,6 @@
 import re
 import jaconv
-from data_sources.General import General
+from premine.data_sources.General import General
 
 class Format:
 
