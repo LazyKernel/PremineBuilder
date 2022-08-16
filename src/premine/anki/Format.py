@@ -1,6 +1,7 @@
 import re
 import jaconv
 from premine.data_sources.General import General
+from premine.anki.static_data import voicing_map
 
 class Format:
 
@@ -58,11 +59,13 @@ class Format:
                 for res in results:
                     for r in res['onyomi']:
                         norm = jaconv.kata2hira(r)
-                        if consumed_reading.startswith(norm):
-                            # correct reading
-                            readings.append(norm)
-                            read_types.append('On')
-                            consumed_reading = consumed_reading.replace(norm, '', 1)
+                        alternatives = self.get_alternative_readings(norm)
+                        for alt in alternatives:
+                            if consumed_reading.startswith(alt):
+                                # correct reading
+                                readings.append(alt)
+                                read_types.append('On')
+                                consumed_reading = consumed_reading.replace(alt, '', 1)
                     
                     for r in res['kunyomi']:
                         # kunyomi have dot to show where the kanji ends
@@ -79,3 +82,16 @@ class Format:
                 read_types.append('')
 
         return readings, read_types
+
+    def get_alternative_readings(self, word: str) -> tuple[str]:
+        alternatives = [word]
+        # reading ends in tsu
+        if word[-1] == 'つ' and len(word) > 1:
+            alternatives.append(word[:-1] + 'っ')
+        # reading ends in ku
+        if word[-1] == 'く' and len(word) > 1:
+            alternatives.append(word[:-1] + 'っ')
+        # consonant voicings in the beginning
+        if word[0] in voicing_map:
+            alternatives.extend([voiced + word[1:] for voiced in voicing_map[word[0]]])
+        return tuple(alternatives)
