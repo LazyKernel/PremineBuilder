@@ -129,7 +129,7 @@ def create_deck_korey(package_name: str):
     print('words_not_in_forvo', words_not_in_forvo) 
 
 def load():
-    create_deck('The Tunnel to Summer', 'the_tunnel_to_summer_unknown_words.txt')
+    create_deck('Spice Wolf', 'spice_wolf.txt')
 
 def setup():
     DBUtil.setup_db()

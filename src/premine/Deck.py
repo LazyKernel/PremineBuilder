@@ -15,7 +15,12 @@ class Deck:
         self.log_to_file = None
         self.status_file_handle = None
 
-    def create_deck(self, package_name: str, package_dir: str, deck_id: str, source_file: str, log_to_file: str | None = None):
+    def create_deck(self, package_name: str, package_dir: str, deck_id: str, source_file: str = None, words: list[str] = None, log_to_file: str | None = None):
+        """
+        Creates a new Anki deck
+
+        requires either source_file or words to be defined
+        """
         if self.creating:
             print('Already creating a deck, create a new object')
             return
@@ -32,7 +37,7 @@ class Deck:
             ):
                 sys.stdout = f
                 sys.stderr = errf
-                self._create_deck_internal(package_name, package_dir, deck_id, source_file)
+                self._create_deck_internal(package_name, package_dir, deck_id, source_file, words)
         except:
             import traceback
             print(traceback.format_exc(), file=sys.stderr)
@@ -69,7 +74,7 @@ class Deck:
             index=['word', 'reading', 'content', 'tag']
         )
 
-    def _create_deck_internal(self, package_name: str, package_dir: str, deck_id: int, source_file: str):
+    def _create_deck_internal(self, package_name: str, package_dir: str, deck_id: str | int, source_file: str = None, words: list[str] = None):
         anki = Anki()
         forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], True)
         general = General()
@@ -78,7 +83,10 @@ class Deck:
         anki.create_package(package_name)
 
         bank_df = pd.read_csv('source/sentence_bank.csv', sep='	', encoding='utf-8')
-        words_df = pd.read_csv(source_file, encoding='utf-8', sep='\t')
+        if words is not None:
+            words_df = pd.DataFrame(words, columns=['words'])
+        else: 
+            words_df = pd.read_csv(source_file, encoding='utf-8', sep='\t')
         words_df = words_df[['word']]
         words_df = words_df.dropna().drop_duplicates()
         words_df['word'] = words_df['word'].str.strip()
