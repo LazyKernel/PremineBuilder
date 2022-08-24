@@ -14,6 +14,8 @@ class Deck:
         self.creating = False
         self.log_to_file = None
         self.status_file_handle = None
+        self.words_done = 0
+        self.words_total = 0
 
     def create_deck(self, package_name: str, package_dir: str, deck_id: str, source_file: str = None, words: list[str] = None, log_to_file: str | None = None):
         """
@@ -30,13 +32,15 @@ class Deck:
             if log_to_file:
                 self.log_to_file = log_to_file
                 self.status_file_handle = open(f'{self.log_to_file}.status', 'w', encoding='utf-8', buffering=1)
-            # line buffering to log file, updating file after each log line
-            with (
-                open(self.log_to_file, 'w', encoding='utf-8', buffering=1) as f,
-                open(f'{self.log_to_file}.error', 'w', encoding='utf-8', buffering=1) as errf
-            ):
-                sys.stdout = f
-                sys.stderr = errf
+                # line buffering to log file, updating file after each log line
+                with (
+                    open(self.log_to_file, 'w', encoding='utf-8', buffering=1) as f,
+                    open(f'{self.log_to_file}.error', 'w', encoding='utf-8', buffering=1) as errf
+                ):
+                    sys.stdout = f
+                    sys.stderr = errf
+                    self._create_deck_internal(package_name, package_dir, deck_id, source_file, words)
+            else:
                 self._create_deck_internal(package_name, package_dir, deck_id, source_file, words)
         except:
             import traceback
@@ -135,6 +139,8 @@ class Deck:
         print('words_not_in_forvo', words_not_in_forvo)
 
     def _update_status(self, words_done: int, words_total: int):
+        self.words_done = words_done
+        self.words_total = words_total
         if self.status_file_handle:
             self.status_file_handle.write(f'{words_done},{words_total}\n')
     
