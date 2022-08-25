@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+from premine import _logger
 from premine.anki.Anki import Anki
 from premine.anki.Format import Format
 from premine.data_sources.Forvo import Forvo
@@ -24,7 +25,7 @@ class Deck:
         requires either source_file or words to be defined
         """
         if self.creating:
-            print('Already creating a deck, create a new object')
+            _logger.error('Already creating a deck, create a new object')
             return
         self.creating = True
 
@@ -43,8 +44,7 @@ class Deck:
             else:
                 self._create_deck_internal(package_name, package_dir, deck_id, source_file, words)
         except:
-            import traceback
-            print(traceback.format_exc(), file=sys.stderr)
+            _logger.exception('An error occurred while trying to create a deck')
         finally:
             self.creating = False
             self.log_to_file = None
@@ -127,7 +127,7 @@ class Deck:
                     examples_list.append(example['en'])
                 anki.set_field('\n<br>\n'.join(examples_list), note_id, 'ExampleSentences')
             else:
-                print('No examples for word', word)
+                _logger.warning('No examples for word: %s', word)
 
             pitches = general.get_pitches_for_word(word)
             pitches_str = '\n'.join([f'{pitch["reading"]}: {", ".join([str(p["position"]) for p in pitch["pitches"]])}' for pitch in pitches])
@@ -136,7 +136,7 @@ class Deck:
         self._update_status(total_words, total_words)
 
         anki.write_to_package(f'{package_dir}/{str(deck_id)}.apkg')
-        print('words_not_in_forvo', words_not_in_forvo)
+        _logger.info('words_not_in_forvo: %s', str(words_not_in_forvo))
 
     def _update_status(self, words_done: int, words_total: int):
         self.words_done = words_done

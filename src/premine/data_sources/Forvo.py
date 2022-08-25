@@ -4,6 +4,7 @@ import cloudscraper
 import base64
 import bs4
 from bs4 import BeautifulSoup
+from premine import _logger
 
 class Forvo:
     base_url = 'https://forvo.com/word'
@@ -22,14 +23,14 @@ class Forvo:
     def download_audio(self, mp3_path: str, word: str):
         data = self.scraper.get(mp3_path)
         if data.status_code != 200:
-            print('something broke with', word, 'path', mp3_path, 'status code', data.status_code)
+            _logger.error('something broke with', word, 'path', mp3_path, 'status code', data.status_code)
             return None
         return data.content
 
     def download_audio_cached(self, word: str):
         path = f'media_tmp/{self.cache}/{word}.mp3'
         if not os.path.isfile(path):
-            print('no audio for word', word)
+            _logger.warning('no audio for word', word)
             return None
         
         with open(path, 'rb') as f:
@@ -55,12 +56,12 @@ class Forvo:
         soup = BeautifulSoup(page.text, 'html.parser')
         lang_container = soup.find('div', {'id': 'language-container-ja'})
         if not lang_container:
-            print('No audio for word', word)
+            _logger.warning('No audio for word', word)
             return None
 
         pronunciation_container = lang_container.find('ul', {'class': 'pronunciations-list-ja'})
         if not pronunciation_container:
-            print('No audio for word', word)
+            _logger.warning('No audio for word', word)
             return None
 
         play_buttons = pronunciation_container.find_all('div', {'class': 'play'})
@@ -85,6 +86,6 @@ class Forvo:
                 audio = self.download_audio(f'{base}/{decoded_url}', word)
 
         if not audio:
-            print('No audio for word', word)
+            _logger.warning('No audio for word', word)
         
         return audio

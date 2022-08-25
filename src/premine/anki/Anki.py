@@ -4,7 +4,7 @@ import time
 import shutil
 from typing import Union
 import pandas as pd
-
+from premine import _logger
 from premine.anki.static_data import model_vocab
 
 class Anki:
@@ -38,13 +38,13 @@ class Anki:
         file_path = os.path.join(self.media_temp, filename)
 
         if file_path in self.media_files:
-            print(f'File with name {filename} already exists in the deck. Skipping...')
+            _logger.debug(f'File with name {filename} already exists in the deck. Skipping...')
             return
 
         self.media_files.append(file_path)
 
         if os.path.isfile(file_path):
-            print(f'File with name {filename} already exists in the media folder. Using existing one...')
+            _logger.debug(f'File with name {filename} already exists in the media folder. Using existing one...')
             return
         
         with open(file_path, 'wb') as fb:

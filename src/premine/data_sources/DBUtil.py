@@ -3,6 +3,7 @@ import zipfile
 import json
 import pandas as pd
 import requests
+from premine import _logger
 
 class DBUtil:
     db_path = 'source/dictionary.db'
@@ -47,7 +48,7 @@ class DBUtil:
 
     @staticmethod
     def load_jlpt_words():
-        print('Loading JLPT words')
+        ('Loading JLPT words')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -66,7 +67,7 @@ class DBUtil:
 
     @staticmethod
     def load_reibun():
-        print('Loading example sentences')
+        _logger.info('Loading example sentences')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -80,7 +81,7 @@ class DBUtil:
 
     @staticmethod
     def load_frequency_lists():
-        print('Loading frequency lists')
+        _logger.info('Loading frequency lists')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -101,7 +102,7 @@ class DBUtil:
 
     @staticmethod
     def load_pitch_accents():
-        print('Loading pitch accents')
+        _logger.info('Loading pitch accents')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -122,7 +123,7 @@ class DBUtil:
 
     @staticmethod
     def load_terms():
-        print('Loading terms')
+        _logger.info('Loading terms')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -145,7 +146,7 @@ class DBUtil:
 
     @staticmethod
     def load_kanji_freqs():
-        print('Loading kanji frequencies')
+        _logger.info('Loading kanji frequencies')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -160,7 +161,7 @@ class DBUtil:
 
     @staticmethod
     def load_kanjis():
-        print('Loading kanjis')
+        _logger.info('Loading kanjis')
         con = DBUtil.get_con()
         cur = con.cursor()
 
@@ -183,12 +184,12 @@ class DBUtil:
 
     @staticmethod
     def setup_db():
-        print('Setting up DB')
+        _logger.info('Setting up DB')
         con = DBUtil.get_con()
         cur = con.cursor()
 
         # Create JLPT words table
-        print('Setting up JLPT words table')
+        _logger.info('Setting up JLPT words table')
         cur.execute(
             '''
             CREATE TABLE dict_jlpt_words(
@@ -204,7 +205,7 @@ class DBUtil:
         cur.execute('CREATE INDEX dict_idx_jlpt_reading ON dict_jlpt_words (reading)')
 
         # Create dictionary term table
-        print('Setting up terms table')
+        _logger.info('Setting up terms table')
         cur.execute(
             '''
             CREATE TABLE dict_term(
@@ -239,7 +240,7 @@ class DBUtil:
         cur.execute('CREATE INDEX dict_idx_kanji_character ON dict_kanji (character)')
 
         # Create example sentences table
-        print('Setting up example sentences table')
+        _logger.info('Setting up example sentences table')
         cur.execute(
             '''
             CREATE TABLE dict_reibun(
@@ -253,7 +254,7 @@ class DBUtil:
         )
 
         # Create frequency table
-        print('Setting up frequency table')
+        _logger.info('Setting up frequency table')
         cur.execute(
             '''
             CREATE TABLE dict_frequency(
@@ -267,7 +268,7 @@ class DBUtil:
         cur.execute('CREATE INDEX dict_idx_frequency_word ON dict_frequency (word)')
 
         # Create pitch accent table
-        print('Setting up pitch accent tables')
+        _logger.info('Setting up pitch accent tables')
         cur.execute(
             '''
             CREATE TABLE dict_tag(
