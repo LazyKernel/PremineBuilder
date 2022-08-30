@@ -88,7 +88,7 @@ class Deck:
 
         bank_df = pd.read_csv('source/sentence_bank.csv', sep='	', encoding='utf-8')
         if words is not None:
-            words_df = pd.DataFrame(words, columns=['words'])
+            words_df = pd.DataFrame(words, columns=['word'])
         else: 
             words_df = pd.read_csv(source_file, encoding='utf-8', sep='\t')
         words_df = words_df[['word']]
