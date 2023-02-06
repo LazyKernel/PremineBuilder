@@ -30,7 +30,7 @@ def generate_content(row):
 
 def create_deck(package_name: str, source_file: str):
     anki = Anki()
-    forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], True)
+    forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], False)
     general = General()
     reibun = Reibun()
     
@@ -129,7 +129,7 @@ def create_deck_korey(package_name: str):
     print('words_not_in_forvo', words_not_in_forvo) 
 
 def load():
-    create_deck('Spice Wolf', 'spice_wolf.txt')
+    create_deck('I had a dream', 'i_had_a_dream_vocab.txt')
 
 def setup():
     DBUtil.setup_db()

@@ -6,7 +6,7 @@ from sudachipy import dictionary
 class Reibun:
 
     def __init__(self):
-        self.tokenizer = dictionary.Dictionary().create()
+        self.tokenizer = dictionary.Dictionary(config_path='source/config.json').create()
         self.mode = tokenizer.Tokenizer.SplitMode.C
         self.general = General()
 
