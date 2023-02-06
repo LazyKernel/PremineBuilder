@@ -48,7 +48,7 @@ class DBUtil:
 
     @staticmethod
     def load_jlpt_words():
-        ('Loading JLPT words')
+        _logger.info('Loading JLPT words')
         con = DBUtil.get_con()
         cur = con.cursor()
 

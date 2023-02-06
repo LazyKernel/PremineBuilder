@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='premine',
-    version='0.0.11',
+    version='0.0.12',
     install_requires=[
         'pandas',
         'sudachipy',

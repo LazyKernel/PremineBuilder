@@ -80,7 +80,7 @@ class Deck:
 
     def _create_deck_internal(self, package_name: str, package_dir: str, deck_id: str | int, source_file: str = None, words: list[str] = None):
         anki = Anki()
-        forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], True)
+        forvo = Forvo(['poyotan', 'strawberrybrown', 'straycat88', 'le_temps_perdu', 'kyokotokyojapan', 'Akiko3001'], False)
         general = General()
         reibun = Reibun()
         

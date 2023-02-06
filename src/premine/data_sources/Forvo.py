@@ -23,14 +23,14 @@ class Forvo:
     def download_audio(self, mp3_path: str, word: str):
         data = self.scraper.get(mp3_path)
         if data.status_code != 200:
-            _logger.error('something broke with', word, 'path', mp3_path, 'status code', data.status_code)
+            _logger.error('something broke with %s path %s status code %d', word, mp3_path, data.status_code)
             return None
         return data.content
 
     def download_audio_cached(self, word: str):
         path = f'media_tmp/{self.cache}/{word}.mp3'
         if not os.path.isfile(path):
-            _logger.warning('no audio for word', word)
+            _logger.warning('1: no audio for word %s', word)
             return None
         
         with open(path, 'rb') as f:
@@ -56,12 +56,12 @@ class Forvo:
         soup = BeautifulSoup(page.text, 'html.parser')
         lang_container = soup.find('div', {'id': 'language-container-ja'})
         if not lang_container:
-            _logger.warning('No audio for word', word)
+            _logger.warning('2: No audio for word %s', word)
             return None
 
         pronunciation_container = lang_container.find('ul', {'class': 'pronunciations-list-ja'})
         if not pronunciation_container:
-            _logger.warning('No audio for word', word)
+            _logger.warning('3: No audio for word %s', word)
             return None
 
         play_buttons = pronunciation_container.find_all('div', {'class': 'play'})
@@ -86,6 +86,6 @@ class Forvo:
                 audio = self.download_audio(f'{base}/{decoded_url}', word)
 
         if not audio:
-            _logger.warning('No audio for word', word)
+            _logger.warning('4: No audio for word %s', word)
         
         return audio
